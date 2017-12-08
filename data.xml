@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE players>
+<?xml-stylesheet type="text/xsl" href="data.xsl"?>
+<players>
+	<player>
+		<team>Knicks</team>
+		<name>Jarrett Jack</name>
+		<position>PG</position>
+		<touches>66.6</touches>
+		<passes>55.7</passes>
+		<twoPointAtt>4.9</twoPointAtt>
+		<twoPointMade>2.2</twoPointMade>
+		<threePointAtt>1.2</threePointAtt>
+		<threePointMade>0.4</threePointMade>
+		<turnovers>1.7</turnovers>
+	</player>
+	<player>
+		<team>Knicks</team>
+		<name>Tim Hardaway Jr.</name>
+		<position>SG</position>
+		<touches>56.4</touches>
+		<passes>35.8</passes>
+		<twoPointAtt>8.0</twoPointAtt>
+		<twoPointMade>4.0</twoPointMade>
+		<threePointAtt>7.2</threePointAtt>
+		<threePointMade>2.3</threePointMade>
+		<turnovers>1.7</turnovers>
+	</player>
+	<player>
+		<team>Knicks</team>
+		<name>Courtney Lee</name>
+		<position>SF</position>
+		<touches>42.6</touches>
+		<passes>29.5</passes>
+		<twoPointAtt>6.4</twoPointAtt>
+		<twoPointMade>3.3</twoPointMade>
+		<threePointAtt>3.6</threePointAtt>
+		<threePointMade>1.7</threePointMade>
+		<turnovers>1.3</turnovers>
+	</player>
+	<player>
+		<team>Knicks</team>
+		<name>Kristaps Porzingis</name>
+		<position>PF</position>
+		<touches>61</touches>
+		<passes>35.6</passes>
+		<twoPointAtt>15.5</twoPointAtt>
+		<twoPointMade>7</twoPointMade>
+		<threePointAtt>4.8</threePointAtt>
+		<threePointMade>2.0</threePointMade>
+		<turnovers>2.3</turnovers>
+	</player>
+	<player>
+		<team>Knicks</team>
+		<name>Enes Kanter</name>
+		<position>C</position>
+		<touches>50.2</touches>
+		<passes>37</passes>
+		<twoPointAtt>9.5</twoPointAtt>
+		<twoPointMade>5.9</twoPointMade>
+		<threePointAtt>0.0</threePointAtt>
+		<threePointMade>0.0</threePointMade>
+		<turnovers>1.8</turnovers>
+	</player>
+	<player>
+		<team>Hawks</team>
+		<name>Dennis Schroder</name>
+		<position>PG</position>
+		<touches>91.2</touches>
+		<passes>66</passes>
+		<twoPointAtt>14.3</twoPointAtt>
+		<twoPointMade>4.6</twoPointMade>
+		<threePointAtt>3.6</threePointAtt>
+		<threePointMade>1.2</threePointMade>
+		<turnovers>2.8</turnovers>
+	</player>
+	<player>
+		<team>Hawks</team>
+		<name>Kent Bazemore</name>
+		<position>SG</position>
+		<touches>52.3</touches>
+		<passes>36.4</passes>
+		<twoPointAtt>6.7</twoPointAtt>
+		<twoPointMade>2.6</twoPointMade>
+		<threePointAtt>3.6</threePointAtt>
+		<threePointMade>1.3</threePointMade>
+		<turnovers>1.8</turnovers>
+	</player>
+	<player>
+		<team>Hawks</team>
+		<name>Taurean Prince</name>
+		<position>SF</position>
+		<touches>46.7</touches>
+		<passes>30.7</passes>
+		<twoPointAtt>7.2</twoPointAtt>
+		<twoPointMade>3.1</twoPointMade>
+		<threePointAtt>4</threePointAtt>
+		<threePointMade>1.7</threePointMade>
+		<turnovers>2.2</turnovers>
+	</player>
+	<player>
+		<team>Hawks</team>
+		<name>Ersan Ilyasova</name>
+		<position>PF</position>
+		<touches>33.9</touches>
+		<passes>27.2</passes>
+		<twoPointAtt>4.3</twoPointAtt>
+		<twoPointMade>1.8</twoPointMade>
+		<threePointAtt>3.6</threePointAtt>
+		<threePointMade>0.6</threePointMade>
+		<turnovers>0.4</turnovers>
+	</player>
+	<player>
+		<team>Hawks</team>
+		<name>Dewayne Dedmon</name>
+		<position>C</position>
+		<touches>41.6</touches>
+		<passes>30.7</passes>
+		<twoPointAtt>6.2</twoPointAtt>
+		<twoPointMade>3.9</twoPointMade>
+		<threePointAtt>1.5</threePointAtt>
+		<threePointMade>0.7</threePointMade>
+		<turnovers>1.8</turnovers>
+	</player>
+</players>
+
