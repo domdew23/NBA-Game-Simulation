@@ -1,20 +1,23 @@
 import java.util.concurrent.ThreadLocalRandom;
 import java.math.BigDecimal;
+import java.math.MathContext;
+
 public class main{
-	private final int GAME_LENGTH = (48 * 60);
+	private static final BigDecimal GAME_LENGTH = new BigDecimal(48 * 60);
 
 	public static void main(String[] args){
-		AtomicModel<AtomicModel, Network> knicksHoop = new Hoop<AtomicModel, Network>();
-		AtomicModel<AtomicModel, Network> hawksHoop = new Hoop<AtomicModel, Network>();
+		AtomicModel<AtomicModel, Network> knicksHoop = new Hoop<AtomicModel, Network>("Knicks Hoop");
+		AtomicModel<AtomicModel, Network> hawksHoop = new Hoop<AtomicModel, Network>("Hawks Hoop");
 
 		XMLParser parser = new XMLParser("data.xml", knicksHoop, hawksHoop);
+		Token ball = new Token();
 
 		Time currentTime = new Time(new BigDecimal(0.0), 0);
 		Scheduler<AtomicModel> scheduler = new Scheduler();
 
-		init(currentTime, scheduler, parser, knicksHoop, hawksHoop);
+		init(currentTime, scheduler, parser, knicksHoop, hawksHoop, ball);
 
-		System.out.println(scheduler);
+		//System.out.println(scheduler);
 
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
@@ -28,12 +31,15 @@ public class main{
 			Hoop.currentTime = currentTime;
 
 			execute(event);
-			System.out.println("------------------------\n" + scheduler);
+			System.out.println("Executing: " + event + "\n------------------------\n" + scheduler);
+			System.out.println("current possesion: " + ball.currentPossesion);
+			if (currentTime.getReal().compareTo(GAME_LENGTH) == 1) break;
 		}
+		System.out.println("\nKnicks " + ball.knicksTotal + " | Hawks " + ball.hawksTotal);
 	}
 
 	private static void init(Time currentTime, Scheduler<AtomicModel> scheduler, XMLParser parser, AtomicModel knicksHoop, 
-		AtomicModel hawksHoop){
+		AtomicModel hawksHoop, Token ball){
 
 		Ref.currentTime = currentTime;
 		Player.currentTime = currentTime;
@@ -43,7 +49,6 @@ public class main{
 		Player.scheduler = scheduler;
 		Hoop.scheduler = scheduler;
 
-		Token ball = new Token();
 		ball.firstPossesion = true;
 
 		AtomicModel<Network, Network> ref = new Ref<Network, Network>();
@@ -68,11 +73,6 @@ public class main{
 		}
 	}
 
-	private static void couple(AtomicModel I, AtomicModel O){
-		I.addOutput(O);
-		O.addInput(I);
-	}
-
 	private static void execute(Event<AtomicModel> event){
 		switch (event.kind){
 			case "lambda":
@@ -93,6 +93,5 @@ public class main{
 				System.out.println("Something went wrong");
 				break;
 		}
-		System.out.println("Executing " + event);
 	}
 }

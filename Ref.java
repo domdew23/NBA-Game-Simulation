@@ -44,15 +44,23 @@ public class Ref<I, O> implements AtomicModel<I, O> {
 			firstPossesion = false;
 		} else {
 			int teamIndex = 0;
-			//System.out.println("Last team with ball: " + myBall.lastTeamWithBall);
 			if (myBall.lastTeamWithBall == (Network) outputs.get(0)){
 				teamIndex = 1;
+				myBall.currentPossesion = (Network) outputs.get(1);
 			} else if (myBall.lastTeamWithBall == (Network) outputs.get(1)) {
 				teamIndex = 0;
+				myBall.currentPossesion = (Network) outputs.get(0);
 			}
-	
+
 			Network<AtomicModel> team = (Network) outputs.get(teamIndex);
 			for (AtomicModel player : team.getInputs()){
+				if (Math.random() < .05){
+					myBall.steal = true;
+					BigDecimal rand = new BigDecimal("3.5");
+					Time newTime = new Time(currentTime.getReal().add(rand), 0);
+					Event<AtomicModel> event = Event.builder(newTime, "deltaExternal", player, lambda()).build();
+					scheduler.put(event);
+				}
 				Event<AtomicModel> event = Event.builder(currentTime, "deltaExternal", player, lambda()).build();
 				scheduler.put(event);
 			}

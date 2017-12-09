@@ -19,7 +19,7 @@ public class Player<I, O> implements AtomicModel<I, O> {
 	private int feildGoalsMade;
 	private int feildGoalsAttempted;
 	private double feildGoalPercentage;
-	private int[] eventPicker;
+	private int[] eventMap;
 
 	private ArrayList<I> inputs;
 	private ArrayList<O> outputs;
@@ -47,15 +47,15 @@ public class Player<I, O> implements AtomicModel<I, O> {
 		this.feildGoalsMade = 0;
 		this.feildGoalsAttempted = 0;
 		this.feildGoalPercentage = 0.0;
-		this.eventPicker = new int[100];
+		this.eventMap = new int[100];
 		this.inputs = new ArrayList<I>();
 		this.outputs = new ArrayList<O>();
 		this.roundingSettings = new MathContext(3);	
 		this.myBall = null;
-		initEventPicker();
+		initEventMap();
 	}
 
-	private void initEventPicker(){
+	private void initEventMap(){
 		int size = 0;
 		long turnover = Math.round(100*turnOverPercentage);
 		long three = Math.round(100*threePointPercentage);
@@ -63,26 +63,23 @@ public class Player<I, O> implements AtomicModel<I, O> {
 		long pass = Math.round(100*passPercentage);
 
 		for (int i = 0; i < turnover; i++){
-			eventPicker[i] = 0;
+			eventMap[i] = 0;
 			size++;
 		}
 
 		for (int i = size; i < three + turnover; i++){
-			eventPicker[i] = 3;
+			eventMap[i] = 3;
 			size++;
 		}
 
 		for (int i = size; i <  two + three + turnover; i++){
-			eventPicker[i] = 2;
+			eventMap[i] = 2;
 			size++;
 		}
 
-		for (int i = size; i <  eventPicker.length; i++){
-			eventPicker[i] = 1;
+		for (int i = size; i <  eventMap.length; i++){
+			eventMap[i] = 1;
 			size++;
-		}
-		if (size > 100){
-			System.out.println("YES: " + size);
 		}
 	}
 
@@ -91,34 +88,44 @@ public class Player<I, O> implements AtomicModel<I, O> {
 	}
 
 	public void deltaExternal(Token ball){
+		scheduler.remove(scheduler.find("deltaInternal", this));
 		myBall = ball;
-		myBall.currentPossesion = team;
+		//myBall.currentPossesion = team;
 		Time newTime = new Time(currentTime.getReal().add(timeAdvance()), 0);
 		
-		if (currentTime.getReal().remainder(new BigDecimal(24.0)).compareTo(new BigDecimal(20.0)) == 1){
+		if (currentTime.getReal().remainder(new BigDecimal(24.0)).compareTo(new BigDecimal(21.0)) == 1){
 			myBall.lowShotClock = true;
+			newTime = currentTime;
 		} else {
 			myBall.lowShotClock = false;
 		}
-		
+
+		//if (myBall.steal) newTime = currentTime;
+
 		Event event = Event.builder(newTime, "deltaInternal", this, myBall).build();
 		scheduler.put(event);
 	}
 
 	public void deltaInternal(){
 		Event<AtomicModel> event = null;
-		int random = ThreadLocalRandom.current().nextInt(0, eventPicker.length);
-		int decision = eventPicker[random];
+		int random = ThreadLocalRandom.current().nextInt(0, eventMap.length);
+		int decision = eventMap[random];
 
-		if (myBall.lowShotClock){
-			decision = ThreadLocalRandom.current().nextInt(2, 4);
-		}
+		if (myBall.lowShotClock) decision = ThreadLocalRandom.current().nextInt(2, 4);
+		if (myBall.steal) decision = 0; myBall.steal = false; scheduler.remove(scheduler.find("deltaExternal", this));
+
 		switch (decision){
 			case 0:
 				turnovers++;
 				myBall.madeShot = false;
 				myBall.turnover = true;
-				System.out.println("turnover");
+				for (O output : outputs){
+					if (Hoop.class.isInstance(output)){
+						event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+						scheduler.put(event);
+						break;
+					}
+				}
 				break;
 			case 1:
 				//pass
@@ -133,13 +140,13 @@ public class Player<I, O> implements AtomicModel<I, O> {
 				break;
 			case 2:
 				if (Math.random() < twoPointAccuracy){
-					// make
 					myBall.madeShot = true;
 					points += 2;
-					myBall.pointValue = 3;
+					myBall.pointValue = 2;
 					feildGoalsAttempted++;
 					feildGoalsMade++;
-
+					if (team.equals("Knicks")) myBall.knicksTotal += 2;
+					if (team.equals("Hawks")) myBall.hawksTotal += 2;
 					for (O output : outputs){
 						if (Hoop.class.isInstance(output)){
 							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
@@ -147,13 +154,17 @@ public class Player<I, O> implements AtomicModel<I, O> {
 							break;
 						}
 					}
-					System.out.println("two pt make");
 				} else {
 					myBall.madeShot = false;
 					feildGoalsAttempted++;
-					System.out.println("two pt miss");	
+					for (O output : outputs){
+						if (Hoop.class.isInstance(output)){
+							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+							scheduler.put(event);
+							break;
+						}
+					}
 				}
-				feildGoalPercentage = (feildGoalsMade/feildGoalsAttempted);
 				break;
 			case 3:
 				if (Math.random() < threePointAccuracy){
@@ -162,6 +173,8 @@ public class Player<I, O> implements AtomicModel<I, O> {
 					points += 3;
 					feildGoalsAttempted++;
 					feildGoalsMade++;
+					if (team.equals("Knicks")) myBall.knicksTotal += 3;
+					if (team.equals("Hawks")) myBall.hawksTotal += 3;
 					for (O output : outputs){
 						if (Hoop.class.isInstance(output)){
 							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
@@ -169,31 +182,59 @@ public class Player<I, O> implements AtomicModel<I, O> {
 							break;
 						}
 					}
-					System.out.println("3 pt make");
 				} else {
 					myBall.madeShot = false;
 					feildGoalsAttempted++;
-					System.out.println("3 pt miss");
+					for (O output : outputs){
+						if (Hoop.class.isInstance(output)){
+							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+							scheduler.put(event);
+							break;
+						}
+					}
 				}
-				feildGoalPercentage = (feildGoalsMade/feildGoalsAttempted);
 				break;
 			default: break;
 				//error
 		}
+		if (feildGoalsAttempted > 0) feildGoalPercentage = ((double) feildGoalsMade/(double) feildGoalsAttempted);
 	}
 
 	public void deltaConfluent(Token ball){
-
+		Event<AtomicModel> event = null;
+		if (Math.random() < twoPointAccuracy){
+			myBall.madeShot = true;
+			myBall.pointValue = 1;
+			points += 1;
+			if (team.equals("Knicks")) myBall.knicksTotal += 1;
+			if (team.equals("Hawks")) myBall.hawksTotal += 1;
+			for (O output : outputs){
+				if (Hoop.class.isInstance(output)){
+					event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+					scheduler.put(event);
+					break;
+				}
+			}
+		} else {
+			myBall.madeShot = false;
+			for (O output : outputs){
+				if (Hoop.class.isInstance(output)){
+					event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+					scheduler.put(event);
+					break;
+				}
+			}
+		}
 	}
 
 	public BigDecimal timeAdvance(){
+		BigDecimal ret = null;
 		if (ThreadLocalRandom.current().nextDouble(0, 1.0) < .95){
-			BigDecimal ret = new BigDecimal(ThreadLocalRandom.current().nextDouble(1.0, 8.0), roundingSettings);
-			return ret;
+			ret = new BigDecimal(ThreadLocalRandom.current().nextDouble(1.0, 8.0), roundingSettings);
 		} else {
-			BigDecimal ret = new BigDecimal(ThreadLocalRandom.current().nextDouble(1.0, 16.0), roundingSettings);
-			return ret;
+			ret = new BigDecimal(ThreadLocalRandom.current().nextDouble(1.0, 16.0), roundingSettings);
 		}
+		return ret;
 	}
 
 	public void addInput(I in){
@@ -205,6 +246,7 @@ public class Player<I, O> implements AtomicModel<I, O> {
 	}
 
 	public String toString(){
-		return name + " - " + position + " (" + team + ")";
+		BigDecimal fg = new BigDecimal(feildGoalPercentage*100, roundingSettings);
+		return name + " - " + position + " (" + team + ") " + points + " " + fg + "% " + turnovers + " TO";
 	}
 }

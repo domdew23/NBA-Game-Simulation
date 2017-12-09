@@ -9,8 +9,10 @@ public class Hoop<I, O> implements AtomicModel<I, O>{
 	private ArrayList<O> outputs;
 
 	private Token myBall;
+	private String team;
 
-	public Hoop(){
+	public Hoop(String team){
+		this.team = team;
 		this.inputs = new ArrayList<I>();
 		this.outputs = new ArrayList<O>();
 		this.myBall = null;
@@ -35,16 +37,18 @@ public class Hoop<I, O> implements AtomicModel<I, O>{
 
 	public void deltaExternal(Token ball){
 		myBall = ball;
-		Event event = Event.builder(currentTime, "deltaInternal", this, lambda()).build();
+		Time newTime = new Time(currentTime.getReal().add(timeAdvance()), 0);
+		Event event = Event.builder(newTime, "deltaInternal", this, lambda()).build();
 		scheduler.put(event);
 	}
 
 	public void deltaConfluent(Token ball){
-
+		deltaExternal(ball);
+		deltaInternal();
 	}
 	
 	public BigDecimal timeAdvance(){
-		return new BigDecimal(0.5);
+		return new BigDecimal(0);
 	}
 
 	public void addInput(I I){
@@ -56,6 +60,6 @@ public class Hoop<I, O> implements AtomicModel<I, O>{
 	}
 
 	public String toString(){
-		return "Hoop";
+		return team;
 	}
 }

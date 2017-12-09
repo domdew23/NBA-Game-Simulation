@@ -130,6 +130,12 @@ public class Scheduler<T>{
 		return null;
 	}
 
+	public void clear(){
+		for (Event<T> e : events){
+			if (e != null) remove(e);
+		}
+	}
+
 	public int size(){
 		return size;
 	}
@@ -157,16 +163,16 @@ public class Scheduler<T>{
 		remove(one);
 		remove(two);
 
-		int q = 0;
-		/*if (one.q != 0){
-			q = one.q;
-		} else if (two.q != 0){
-			q = two.q;
+		Token t = null;
+		if (one.token != null){
+			t = one.token;
+		} else if (two.token != null){
+			t = two.token;
 		} else {
 			throw new NullPointerException("Something went wrong while merging.");
-		}*/
-
-		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj, null).build();
+		}
+		System.out.println("deltaConfluent!"); try {Thread.sleep(20000);}catch(InterruptedException e){}
+		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj, t).build();
 		put(event);
 	}
 

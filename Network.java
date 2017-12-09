@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.math.BigDecimal;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Network<T> {
 	private ArrayList<T> components;

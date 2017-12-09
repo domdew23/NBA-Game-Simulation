@@ -8,9 +8,9 @@
 		<position>PG</position>
 		<touches>66.6</touches>
 		<passes>55.7</passes>
-		<twoPointAtt>4.9</twoPointAtt>
-		<twoPointMade>2.2</twoPointMade>
-		<threePointAtt>1.2</threePointAtt>
+		<twoPointAtt>4.3</twoPointAtt>
+		<twoPointMade>1.2</twoPointMade>
+		<threePointAtt>2.2</threePointAtt>
 		<threePointMade>0.4</threePointMade>
 		<turnovers>1.7</turnovers>
 	</player>
@@ -94,7 +94,7 @@
 		<passes>30.7</passes>
 		<twoPointAtt>7.2</twoPointAtt>
 		<twoPointMade>3.1</twoPointMade>
-		<threePointAtt>4</threePointAtt>
+		<threePointAtt>4.0</threePointAtt>
 		<threePointMade>1.7</threePointMade>
 		<turnovers>2.2</turnovers>
 	</player>
