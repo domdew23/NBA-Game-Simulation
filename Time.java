@@ -24,4 +24,8 @@ public class Time {
 	public int getDiscrete(){
 		return discrete;
 	}
+
+	public String toString(){
+		return real.toString();
+	}
 }

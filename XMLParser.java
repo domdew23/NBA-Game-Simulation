@@ -7,7 +7,7 @@ public class XMLParser {
 	public ArrayList<AtomicModel> knicks;
 	public ArrayList<AtomicModel> hawks;
 
-	public XMLParser(String fileName){
+	public XMLParser(String fileName, AtomicModel knicksHoop, AtomicModel hawksHoop){
 		knicks = new ArrayList<AtomicModel>();
 		hawks = new ArrayList<AtomicModel>();
 
@@ -33,18 +33,17 @@ public class XMLParser {
 					turnovers);
 			}
 		}
-
-		finish(knicks);
-		finish(hawks);
+		couple(knicks, knicksHoop);
+		couple(hawks, hawksHoop);
 	}
 
-	private void finish(ArrayList<AtomicModel> team){
+	private void couple(ArrayList<AtomicModel> team, AtomicModel hoop){
 		for (AtomicModel player : team){
 			for (AtomicModel p : team){
-				if (p != player){
-					player.addInput(p);
-					player.addOutput(p);
-				}
+				player.addInput(p);
+				player.addOutput(p);
+				player.addOutput(hoop);
+				hoop.addInput(player);
 			}
 		}
 	}
@@ -63,15 +62,15 @@ public class XMLParser {
 			AtomicModel<Network, AtomicModel> pg = new Player<Network, AtomicModel>(team, name, pos, passPer, twoPtPer, twoPtAcc,
 				threePtPer, threePtAcc, turnoverPer);
 			switch (team){
-				case "Knicks": knicks.add(0, pg);
-				case "Hawks": hawks.add(0, pg);
+				case "Knicks": knicks.add(0, pg); break;
+				case "Hawks": hawks.add(0, pg); break;
 			}
 		} else {
 			AtomicModel<AtomicModel, AtomicModel> p = new Player<AtomicModel, AtomicModel>(team, name, pos, passPer, twoPtPer, twoPtAcc,
 				threePtPer, threePtAcc, turnoverPer);
 			switch (team){
-				case "Knicks": knicks.add(p);
-				case "Hawks": hawks.add(p);
+				case "Knicks": knicks.add(p); break;
+				case "Hawks": hawks.add(p); break;
 			}
 		}
 	}
@@ -80,10 +79,8 @@ public class XMLParser {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setIgnoringComments(true);
 			factory.setIgnoringElementContentWhitespace(true);
-			//factory.setValidating(true);
 
 			DocumentBuilder builder = factory.newDocumentBuilder();
-
 			return builder.parse(new InputSource(docString));
 		} catch (Exception ex){
 			ex.printStackTrace();

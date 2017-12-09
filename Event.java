@@ -18,7 +18,7 @@ public class Event<T> implements Comparable<Event<T>>{
 	}
 
 	public String toString(){
-		return "Time: " + time.getReal() + " | Kind: " + kind + " | Object: " + obj;
+		return "Time: " + time + " | Kind: " + kind + " | Object: " + obj;
 	}
 
 	public static class EventBuilder<T>{

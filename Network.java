@@ -1,10 +1,11 @@
 import java.util.ArrayList;
 import java.math.BigDecimal;
+
 public class Network<T> {
 	private ArrayList<T> components;
 	private ArrayList<T> inputs;
 	private ArrayList<T> outputs;
-	private int componentCount;
+	private String name;
 
 	private Network(){}
 
@@ -24,11 +25,15 @@ public class Network<T> {
 		return outputs;
 	}
 
+	public String toString(){
+		return name;
+	}
+
 	public static class NetworkBuilder<T>{
 		private ArrayList<T> components = new ArrayList<T>();
 		private ArrayList<T> inputs = new ArrayList<T>();
 		private ArrayList<T> outputs = new ArrayList<T>();
-		private int componentCount = 0;
+		private String name = "Network";
 
 		public NetworkBuilder(){}
 
@@ -41,6 +46,11 @@ public class Network<T> {
 			for (T comp : componentList){
 				this.components.add(comp);
 			}
+			return this;
+		}
+
+		public NetworkBuilder addName(String name){
+			this.name = name;
 			return this;
 		}
 
@@ -57,9 +67,9 @@ public class Network<T> {
 		public Network build(){
 			Network network = new Network();
 			network.components = this.components;
-			network.componentCount = this.components.size();
 			network.inputs = this.inputs;
 			network.outputs = this.outputs;
+			network.name = this.name;
 			return network;
 		}
 	}

@@ -81,24 +81,38 @@ public class Player<I, O> implements AtomicModel<I, O> {
 			eventPicker[i] = 1;
 			size++;
 		}
+		if (size > 100){
+			System.out.println("YES: " + size);
+		}
 	}
 
 	public Token lambda(){
-		return null;
+		return myBall;
 	}
 
 	public void deltaExternal(Token ball){
 		myBall = ball;
 		myBall.currentPossesion = team;
 		Time newTime = new Time(currentTime.getReal().add(timeAdvance()), 0);
-		Event event = Event.builder(newTime, "deltaInternal", this, ball).build();
+		
+		if (currentTime.getReal().remainder(new BigDecimal(24.0)).compareTo(new BigDecimal(20.0)) == 1){
+			myBall.lowShotClock = true;
+		} else {
+			myBall.lowShotClock = false;
+		}
+		
+		Event event = Event.builder(newTime, "deltaInternal", this, myBall).build();
 		scheduler.put(event);
 	}
 
 	public void deltaInternal(){
-		// pass ball or shoot or turnover (done holding)
-		int random = ThreadLocalRandom.current().nextInt(0, eventPicker.length+1);
+		Event<AtomicModel> event = null;
+		int random = ThreadLocalRandom.current().nextInt(0, eventPicker.length);
 		int decision = eventPicker[random];
+
+		if (myBall.lowShotClock){
+			decision = ThreadLocalRandom.current().nextInt(2, 4);
+		}
 		switch (decision){
 			case 0:
 				turnovers++;
@@ -108,25 +122,62 @@ public class Player<I, O> implements AtomicModel<I, O> {
 				break;
 			case 1:
 				//pass
-				System.out.println("pass");
+				int index = ThreadLocalRandom.current().nextInt(0, outputs.size());
+				AtomicModel reciever = (AtomicModel) outputs.get(index);
+				while (Hoop.class.isInstance(reciever)){
+					index = ThreadLocalRandom.current().nextInt(0, outputs.size());
+					reciever = (AtomicModel) outputs.get(index);
+				}
+				event = Event.builder(currentTime, "deltaExternal", reciever, lambda()).build();
+				scheduler.put(event);
 				break;
 			case 2:
 				if (Math.random() < twoPointAccuracy){
 					// make
+					myBall.madeShot = true;
+					points += 2;
+					myBall.pointValue = 3;
+					feildGoalsAttempted++;
+					feildGoalsMade++;
+
+					for (O output : outputs){
+						if (Hoop.class.isInstance(output)){
+							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+							scheduler.put(event);
+							break;
+						}
+					}
 					System.out.println("two pt make");
 				} else {
-					//miss
+					myBall.madeShot = false;
+					feildGoalsAttempted++;
 					System.out.println("two pt miss");	
 				}
+				feildGoalPercentage = (feildGoalsMade/feildGoalsAttempted);
 				break;
 			case 3:
 				if (Math.random() < threePointAccuracy){
+					myBall.madeShot = true;
+					myBall.pointValue = 3;
+					points += 3;
+					feildGoalsAttempted++;
+					feildGoalsMade++;
+					for (O output : outputs){
+						if (Hoop.class.isInstance(output)){
+							event = Event.builder(currentTime, "deltaExternal", output, lambda()).build();
+							scheduler.put(event);
+							break;
+						}
+					}
 					System.out.println("3 pt make");
 				} else {
+					myBall.madeShot = false;
+					feildGoalsAttempted++;
 					System.out.println("3 pt miss");
 				}
+				feildGoalPercentage = (feildGoalsMade/feildGoalsAttempted);
 				break;
-			default:
+			default: break;
 				//error
 		}
 	}
