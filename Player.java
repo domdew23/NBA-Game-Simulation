@@ -90,7 +90,6 @@ public class Player<I, O> implements AtomicModel<I, O> {
 	public void deltaExternal(Token ball){
 		scheduler.remove(scheduler.find("deltaInternal", this));
 		myBall = ball;
-		//myBall.currentPossesion = team;
 		Time newTime = new Time(currentTime.getReal().add(timeAdvance()), 0);
 		
 		if (currentTime.getReal().remainder(new BigDecimal(24.0)).compareTo(new BigDecimal(21.0)) == 1){
@@ -99,8 +98,6 @@ public class Player<I, O> implements AtomicModel<I, O> {
 		} else {
 			myBall.lowShotClock = false;
 		}
-
-		//if (myBall.steal) newTime = currentTime;
 
 		Event event = Event.builder(newTime, "deltaInternal", this, myBall).build();
 		scheduler.put(event);

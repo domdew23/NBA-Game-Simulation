@@ -17,8 +17,6 @@ public class main{
 
 		init(currentTime, scheduler, parser, knicksHoop, hawksHoop, ball);
 
-		//System.out.println(scheduler);
-
 		while (!(scheduler.isEmpty())){
 			System.out.println("Global time: " + currentTime.getReal());
 			Event<AtomicModel> event = scheduler.pull();

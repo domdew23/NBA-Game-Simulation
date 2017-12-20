@@ -171,7 +171,7 @@ public class Scheduler<T>{
 		} else {
 			throw new NullPointerException("Something went wrong while merging.");
 		}
-		System.out.println("deltaConfluent!"); try {Thread.sleep(20000);}catch(InterruptedException e){}
+		//System.out.println("deltaConfluent!"); try {Thread.sleep(20000);}catch(InterruptedException e){}
 		Event<T> event = Event.builder(one.time, "deltaConfluent", one.obj, t).build();
 		put(event);
 	}
